@@ -1,0 +1,126 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cryptoJs = require("crypto-js");
+
+const dotenv = require("dotenv");
+const result = dotenv.config();
+
+const User = require("../models/User");
+
+exports.signup = (req, res, next) => {
+  console.log("CONTENU: req.body.email");
+  console.log(req.body.email);
+
+  console.log("CONTENU: req.body.password");
+  console.log(req.body.password);
+
+  const emailCryptoJs = cryptoJs
+    .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+    .toString();
+
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => {
+      const user = new User({
+        email: emailCryptoJs,
+        password: hash,
+      });
+
+      user
+        .save()
+        .then(() => res.status(201).json({ message: "Utilisateur créé" }))
+        .catch((error) =>
+          res.status(400).json({ error }).send(console.log(error))
+        );
+    })
+    .catch((error) => res.status(500).json({ error }).send(console.log(error)));
+};
+
+exports.login = (req, res, next) => {
+  console.log("CONTENU: req.body.email");
+  console.log(req.body.email);
+
+  console.log("CONTENU: req.body.password");
+  console.log(req.body.password);
+
+  const emailCryptoJs = cryptoJs
+    .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+    .toString();
+
+  User.findOne({ email: emailCryptoJs })
+    .then((user) => {
+      if (!user) {
+        return res.status(400).json({ error: "Utilisateur introuvable" });
+      }
+
+      bcrypt
+        .compare(req.body.password, user.password)
+        .then((valid) => {
+          console.log("----->valid");
+          console.log(valid);
+          if (!valid) {
+            return res
+              .status(401)
+              .json({ message: "Authentification incorrecte" });
+          }
+          res.status(200).json({
+            userId: user._id,
+            token: jwt.sign({ userId: user._id }, `${process.env.JWT_TOKEN}`, {
+              expiresIn: "24h",
+            }),
+          });
+        })
+        .catch((error) => res.status(500).json({ error }));
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
+
+// exports.login = (req, res, next) => {
+//   User.findOne({ email: req.body.email })
+//     .then((user) => {
+//       if (!user) {
+//         return res.status(401).json({ message: "Authentification incorrecte" });
+//       }
+//   bcrypt
+//     .compare(req.body.password, user.password)
+//     .then((valid) => {
+//       if (!valid) {
+//         return res
+//           .status(401)
+//           .json({ message: "Authentification incorrecte" });
+//       }
+//       res.status(200).json({
+//         userId: user._id,
+//         token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+//           expiresIn: "24h",
+//         }),
+//       });
+//     })
+//     .catch((error) => res.status(500).json({ error }));
+// })
+// .catch((error) => res.status(500).json({ error }));
+//};
+
+//exports.signup = (req, res, next) => {
+//   const emailCrypto = cryptoJs
+//     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+//     .toString();
+
+//   bcrypt
+//     .hash(req.body.password, 10)
+//     .then((hash) => {
+//       const user = new User({
+//         email: emailCrypto,
+//         password: hash,
+//       });
+
+//       user
+//         .save()
+//         .then(() => res.status(201).json({ message: "Utilisateur créé" }))
+//         .catch((error) =>
+//           res.status(400).json({ error }).send(console.log(error))
+//         );
+//     })
+//     .catch((error) => res.status(500).json({ error }).send(console.log(error)));
+//   next();
+// };

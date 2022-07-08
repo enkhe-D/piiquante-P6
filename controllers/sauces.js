@@ -1,47 +1,36 @@
+//const fs = require("fs");
+//const bodyParser = require("body-parser");
 const Sauces = require("../models/Sauces");
-const fs = require("fs");
-const { json } = require("body-parser");
 
-/////// CONTROLLER CREATE SAUCE
-// exports.createSauces = (req, res, next) => {
-//   const sauceObjet = JSON.parse(req.body.Sauces);
-//   const sauce = new Sauces({
-//     ...sauceObjet,
-//     userId: req.auth.userId,
-//     imageUrl: `${req.protocol}://${req.get("host")}/images/${
-//       req.file.filename
-//     }`,
-//   });
-
-//   sauce
-//     .save()
-//     .then(() => {
-//       res.status(201).json({ message: "Sauce enregistré" });
-//     })
-//     .catch((error) => {
-//       res.status(400).json({ error });
-//     });
-// };
-
+//CONTROLLER CREATE SAUCE
 exports.createSauces = (req, res, next) => {
-  console.log("---->CONTENU: req.body - saucesCtrl");
+  console.log("////CONTENU: req.body - ctrl");
   console.log(req.body);
 
-  console.log("---->CONTENU: req.body.Sauces - saucesCtrl");
-  console.log(req.body.Sauces);
+  console.log("--------CONTENU: req.body.sauces----------------");
+  console.log(req.body.sauces);
 
-  //JSON.parse créé un probleme
-  const saucesObject = req.body.Sauces;
-  console.log("/////// sauce sans Maj S cree un undefined");
-  console.log(saucesObject);
+  const sauceObjet = JSON.parse(req.body.sauces);
 
-  const autreSauce = new Sauces({
-    ...saucesObject,
+  console.log("------------CONTENU: sauceObject - ctrl-----------------");
+  console.log(sauceObjet);
+
+  console.log("---------fabriquer l url de l image-----------");
+  console.log(req.protocol);
+  console.log(req.get("host"));
+  console.log(req.file.filename);
+
+  const sauce = new Sauces({
+    ...sauceObjet,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`,
   });
-  console.log("//////// autreSauce new Sauces");
-  console.log(autreSauce);
 
-  autreSauce
+  console.log("------new sauce-------------");
+  console.log(sauce);
+
+  sauce
     .save()
     .then(() => {
       res.status(201).json({ message: "Sauce enregistré", contenu: req.body });
@@ -51,11 +40,41 @@ exports.createSauces = (req, res, next) => {
     });
 };
 
+// exports.createSauces = (req, res, next) => {
+//   console.log("---------------------------------------");
+//   //const saucesObject = req.body.sauces;
+//   delete req.body._id;
+//   const sauces = new Sauces({
+//     ...req.body,
+//   });
+//   sauces
+//     .save()
+//     .then(() => {
+//       res.status(201).json({ message: "Sauce enregistré", contenu: req.body });
+//     })
+//     .catch((error) => {
+//       res.status(400).json({ error });
+//     });
+// };
+
+/////// CONTROLLER ALL SAUCES
+exports.readAllSauces = (req, res, next) => {
+  console.log("---------------------------------------");
+  console.log("ROUTE: readAllSauces");
+
+  Sauces.find()
+    .then((sauces) => {
+      res.status(200).json(sauces);
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
+};
+
 /////// CONTROLLER ONE SAUCE
 exports.readOneSauce = (req, res, next) => {
-  console.log("/////////ROUTE: readOneSauce");
-  console.log(req.params.id);
-  console.log({ _id: req.params.id });
+  console.log("---------------------------------------");
+  console.log("ROUTE: readOneSauce");
 
   Sauces.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
@@ -91,23 +110,24 @@ exports.readOneSauce = (req, res, next) => {
 //       res.status(400).json({ error });
 //     });
 // };
-exports.upDateSauce = (req, res, next) => {
-  console.log("/////////ROUTE: upDateSauce");
-  console.log(req.params.id);
-  console.log({ _id: req.params.id });
+exports.upDateOneSauce = (req, res, next) => {
+  console.log("---------------------------------------");
+  console.log("/////////ROUTE: upDateOneSauce");
 
-  console.log("---->CONTENU: req.body");
-  console.log(req.body);
+  // const sauce = new Sauces({
+  //   ...req.body,
+  // });
 
-  console.log("---->CONTENU: ...req.body");
-  console.log({ ...req.body });
+  //faire la vérification de req.file
 
   Sauces.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Sauce modifié" }))
+    .then(() =>
+      res.status(200).json({ message: "Sauce modifié", contenu: req.body })
+    )
     .catch((error) => res.status(400).json({ error }));
 };
 
-///////CONTROLLER DELETE SAUCE
+// /////CONTROLLER DELETE SAUCE
 // exports.deleteSauce = (req, res, next) => {
 //   Sauces.findOne({ _id: req.params.id })
 //     .then((sauce) => {
@@ -128,24 +148,11 @@ exports.upDateSauce = (req, res, next) => {
 //       res.status(500).json({ error });
 //     });
 // };
-exports.deleteSauce = (req, res, next) => {
-  console.log("//////////ROUTE: deleteSauce");
-  console.log({ _id: req.params.id });
+exports.deleteOneSauce = (req, res, next) => {
+  console.log("---------------------------------------");
+  console.log("ROUTE: deleteOneSauce");
 
   Sauces.deleteOne({ _id: req.params.id })
     .then(() => res.status(200).json({ message: "Sauce supprimé" }))
     .catch((error) => res.status(400).json({ error }));
-};
-
-/////// CONTROLLER ALL SAUCES
-exports.readAllSauces = (req, res, next) => {
-  console.log("//////////ROUTE: readAllSauces");
-
-  Sauces.find()
-    .then((allSauces) => {
-      res.status(200).json(allSauces);
-    })
-    .catch((error) => {
-      res.status(400).json({ error });
-    });
 };

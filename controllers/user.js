@@ -7,13 +7,9 @@ const result = dotenv.config();
 
 const User = require("../models/User");
 
+/////////CONTROLER SIGNUP
+
 exports.signup = (req, res, next) => {
-  console.log("CONTENU: req.body.email");
-  console.log(req.body.email);
-
-  console.log("CONTENU: req.body.password");
-  console.log(req.body.password);
-
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
     .toString();
@@ -36,12 +32,16 @@ exports.signup = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }).send(console.log(error)));
 };
 
+/////////CONTROLER LOGIN
 exports.login = (req, res, next) => {
+  console.log("---------------------------------------");
   console.log("CONTENU: req.body.email");
   console.log(req.body.email);
 
+  console.log("---------------------------------------");
   console.log("CONTENU: req.body.password");
   console.log(req.body.password);
+  console.log("---------------------------------------");
 
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
@@ -56,7 +56,7 @@ exports.login = (req, res, next) => {
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
-          console.log("----->valid");
+          console.log("----->PASSWORD valid");
           console.log(valid);
           if (!valid) {
             return res

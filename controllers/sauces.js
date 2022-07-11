@@ -1,6 +1,6 @@
-//const fs = require("fs");
-//const bodyParser = require("body-parser");
 const Sauces = require("../models/Sauces");
+const fs = require("fs");
+//const bodyParser = require("body-parser");
 
 //CONTROLLER CREATE SAUCE
 exports.createSauces = (req, res, next) => {
@@ -9,6 +9,9 @@ exports.createSauces = (req, res, next) => {
 
   console.log("--------CONTENU: req.body.sauces----------------");
   console.log(req.body.sauces);
+
+  console.log("------CONTENU: POST req.file--------------");
+  console.log(req.file);
 
   const sauceObjet = JSON.parse(req.body.sauces);
 
@@ -111,20 +114,61 @@ exports.readOneSauce = (req, res, next) => {
 //     });
 // };
 exports.upDateOneSauce = (req, res, next) => {
-  console.log("---------------------------------------");
-  console.log("/////////ROUTE: upDateOneSauce");
+  console.log("------ROUTE: put--------------");
+  console.log(req.params.id);
+  console.log({ _id: req.params.id });
 
-  // const sauce = new Sauces({
-  //   ...req.body,
-  // });
+  console.log("------CONTENU: req.file--------------");
+  console.log(req.body);
 
-  //faire la vérification de req.file
+  console.log("------CONTENU: PUT req.file--------------");
+  console.log(req.file);
 
-  Sauces.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+  if (req.file) {
+    Sauces.findOne({ _id: req.params.id })
+      .then((sauceObjet) => {
+        console.log("--------res promesse objet----------");
+        console.log(sauceObjet);
+        const filename = sauceObjet.imageUrl.split("/images")[1];
+
+        console.log("---filename-----------");
+        console.log(filename);
+
+        fs.unlink(`images/${filename}`, (error) => {
+          if (error) throw error;
+        });
+      })
+      .catch((error) => res.status(404).json({ error }));
+  } else {
+    console.log("false");
+  }
+
+  console.log("------CONTENU: req.body-------");
+  console.log(req.body);
+
+  console.log("------CONTENU: req.body.sauces-------");
+  console.log(req.body.sauces);
+
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauces),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body };
+
+  console.log("-----sauceObject------------");
+  console.log(sauceObject);
+
+  Sauces.updateOne(
+    { _id: req.params.id },
+    { ...sauceObject, _id: req.params.id }
+  )
     .then(() =>
-      res.status(200).json({ message: "Sauce modifié", contenu: req.body })
+      res.status(200).json({ message: "Sauce modifié", contenu: sauceObject })
     )
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(404).json({ error }));
 };
 
 // /////CONTROLLER DELETE SAUCE
@@ -152,7 +196,27 @@ exports.deleteOneSauce = (req, res, next) => {
   console.log("---------------------------------------");
   console.log("ROUTE: deleteOneSauce");
 
-  Sauces.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Sauce supprimé" }))
-    .catch((error) => res.status(400).json({ error }));
+  Sauces.findOne({ _id: req.params.id })
+    .then((sauceObject) => {
+      const filename = sauceObject.imageUrl.split("/images")[1];
+
+      userIdParamsUrl = req.originalUrl.split("=")[1];
+
+      if (userIdParamsUrl === sauceObject.userId) {
+        next();
+      } else {
+        throw "action non autorisé";
+      }
+
+      // fs.unlink(`images/${filename}`, () => {
+      //   Sauces.deleteOne({ _id: req.params.id })
+      //     .then(res.status(200).json({ message: "Sauce supprimé" }))
+      //     .catch((error) => res.status(404).json({ error }));
+      // });
+    })
+    .catch((error) => res.status(500).json({ error }));
+
+  // Sauces.deleteOne({ _id: req.params.id })
+  //   .then(() => res.status(200).json({ message: "Sauce supprimé" }))
+  //   .catch((error) => res.status(400).json({ error }));
 };

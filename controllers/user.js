@@ -34,15 +34,6 @@ exports.signup = (req, res, next) => {
 
 /////////CONTROLER LOGIN
 exports.login = (req, res, next) => {
-  console.log("---------------------------------------");
-  console.log("CONTENU: req.body.email");
-  console.log(req.body.email);
-
-  console.log("---------------------------------------");
-  console.log("CONTENU: req.body.password");
-  console.log(req.body.password);
-  console.log("---------------------------------------");
-
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
     .toString();
@@ -50,14 +41,12 @@ exports.login = (req, res, next) => {
   User.findOne({ email: emailCryptoJs })
     .then((user) => {
       if (!user) {
-        return res.status(400).json({ error: "Utilisateur introuvable" });
+        return res.status(401).json({ error: "Utilisateur introuvable" });
       }
 
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
-          console.log("----->PASSWORD valid");
-          console.log(valid);
           if (!valid) {
             return res
               .status(401)

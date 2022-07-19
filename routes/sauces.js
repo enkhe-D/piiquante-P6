@@ -6,13 +6,13 @@ const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
 /*--------------------CONTROLLER-------------------*/
-//const optionSauceCtrl = require("../controllers/option-sauce");
 const saucesCtrl = require("../controllers/sauces");
+const optionSauceCtrl = require("../controllers/option-sauce");
 
 /*----------------------ROUTES---------------------*/
 //POST ----- CREATE ----- CRÉATION
 router.post("/", auth, multer, saucesCtrl.createSauces);
-//router.post("/:id/like", auth, optionSauceCtrl.userLike);
+router.post("/:id/like", auth, optionSauceCtrl.userLike);
 
 //GET ----- READ ----- AFFICHAGE
 router.get("/", auth, saucesCtrl.readAllSauces);

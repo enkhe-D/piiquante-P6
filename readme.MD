@@ -1,10 +1,18 @@
-# backend
+##### frontend
+pour lancer le frontend tapper la commend : ng serve
+
+# Créer un compte
+http://localhost:4200/api/auth
+
+email + mdp
+
+##### backend
 
 Pour lancer le server: nodemon server
 
 # Routes
 
-##### Route POST pour créer un compte
+### Route POST pour créer un compte
 
 http://localhost:3000/api/auth/signup
 
@@ -15,7 +23,7 @@ body --> raw:
 "password": "xxxxxxxxxx
 }
 
-##### Route POST pour se connecter
+### Route POST pour se connecter
 
 http://localhost:3000/api/auth/login
 
@@ -26,7 +34,7 @@ body --> raw:
 "password": "xxxxxxxxxx
 }
 
-##### Route POST création sauces
+### Route POST création sauces
 
 http://localhost:3000/api/sauces/
 
@@ -48,7 +56,7 @@ value: {
 key: image
 file et sélectionner l'image
 
-##### Route GET voir tout les sauces
+### Route GET voir tout les sauces
 
 http://localhost:3000/api/sauces/
 
@@ -58,7 +66,7 @@ body--> raw:
 "userId": "xxxxxxxxxxxxxx"
 }
 
-##### Route GET voir une sauce
+### Route GET voir une sauce
 
 http://localhost:3000/api/sauces/:id
 
@@ -66,7 +74,7 @@ Authorization --> bearerToken Token:xxxxxxx
 Params --> KEY:userId VALUE:\_id de l'user
 Body --> none
 
-#### Route PUT pour update une sauce
+### Route PUT pour update une sauce
 
 http://localhost:3000/api/sauces/:id
 
@@ -88,7 +96,7 @@ VALUE:
 KEY: image
 file et sélectionner l'image
 
-##### Route DELETE suppression de sauce
+### Route DELETE suppression de sauce
 
 http://localhost:3000/api/sauces/:id
 

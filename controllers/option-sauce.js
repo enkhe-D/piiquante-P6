@@ -1,11 +1,6 @@
 const Sauce = require("../models/Sauce");
 
 exports.userLike = (req, res, next) => {
-  console.log("je suis dans le ctrl like");
-  console.log("----------req.body---likes-------");
-  console.log(req.body.like);
-  console.log("-----------------------------------");
-
   Sauce.findOne({ _id: req.params.id })
     .then((sauceObjet) => {
       if (

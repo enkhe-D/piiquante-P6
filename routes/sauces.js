@@ -19,7 +19,7 @@ router.get("/", auth, saucesCtrl.readAllSauces);
 router.get("/:id", auth, saucesCtrl.readOneSauce);
 
 //PUT ----- UPDATE ----- MODIFIER
-router.put("/:id", auth, multer, saucesCtrl.upDateOneSauce);
+router.put("/:id", auth, multer, saucesCtrl.updateOneSauce);
 
 //DELETE ----- DELETE ----- SUPPRIMER
 router.delete("/:id", auth, saucesCtrl.deleteOneSauce);

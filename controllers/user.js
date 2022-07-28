@@ -1,12 +1,12 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cryptoJs = require("crypto-js");
-require("dotenv").config();
+const dotenv = require("dotenv");
+const result = dotenv.config();
 
 const User = require("../models/User");
 
-/////////CONTROLER SIGNUP
-
+//--------CONTROLER SIGNUP
 exports.signup = (req, res, next) => {
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
@@ -30,7 +30,7 @@ exports.signup = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }).send(console.log(error)));
 };
 
-/////////CONTROLER LOGIN
+//----------CONTROLER LOGIN
 exports.login = (req, res, next) => {
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)

@@ -14,7 +14,7 @@ exports.userLike = (req, res, next) => {
             $push: { usersLiked: req.body.userId },
           }
         )
-          .then(() => res.status(200).json({ message: "Vous avez liké" }))
+          .then(() => res.status(200).json({ message: "liked" }))
           .catch((error) => res.status(400).json({ error }));
       }
 
@@ -48,7 +48,7 @@ exports.userLike = (req, res, next) => {
             $push: { usersDisliked: req.body.userId },
           }
         )
-          .then(() => res.status(200).json({ message: "Vous n aimez pas" }))
+          .then(() => res.status(200).json({ message: "disliked" }))
           .catch((error) => res.status(400).json({ error }));
       }
 

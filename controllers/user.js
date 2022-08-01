@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const cryptoJs = require("crypto-js");
+const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const result = dotenv.config();
 
@@ -24,10 +24,10 @@ exports.signup = (req, res, next) => {
         .save()
         .then(() => res.status(201).json({ message: "Utilisateur créé" }))
         .catch((error) =>
-          res.status(400).json({ error }).send(console.log(error))
+          res.status(400).json({ error, message:"Autentification incorrecte" })
         );
     })
-    .catch((error) => res.status(500).json({ error }).send(console.log(error)));
+    .catch((error) => res.status(500).json({ error }));
 };
 
 //----------CONTROLER LOGIN
@@ -39,7 +39,9 @@ exports.login = (req, res, next) => {
   User.findOne({ email: emailCryptoJs })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ error: "Utilisateur introuvable" });
+        return res.status(401).json({
+          error: "Utilisateur introuvable",
+        });
       }
 
       bcrypt
@@ -47,7 +49,7 @@ exports.login = (req, res, next) => {
         .then((valid) => {
           if (!valid) {
             return res
-              .status(401)
+              .status(403)
               .json({ message: "Authentification incorrecte" });
           }
           res.status(200).json({

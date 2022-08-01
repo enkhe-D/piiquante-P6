@@ -1,5 +1,4 @@
 const express = require("express");
-const router = express.Router();
 
 /*-------------------MIDDLEWARE--------------------*/
 const auth = require("../middleware/auth");
@@ -10,6 +9,8 @@ const saucesCtrl = require("../controllers/sauces");
 const optionSauceCtrl = require("../controllers/option-sauce");
 
 /*----------------------ROUTES---------------------*/
+const router = express.Router();
+
 //POST ----- CREATE ----- CRÉATION
 router.post("/", auth, multer, saucesCtrl.createSauces);
 router.post("/:id/like", auth, optionSauceCtrl.userLike);
@@ -18,10 +19,10 @@ router.post("/:id/like", auth, optionSauceCtrl.userLike);
 router.get("/", auth, saucesCtrl.readAllSauces);
 router.get("/:id", auth, saucesCtrl.readOneSauce);
 
-//PUT ----- UPDATE ----- MODIFIER
+//PUT ----- UPDATE ----- MODIFICATION/MISE A JOUR
 router.put("/:id", auth, multer, saucesCtrl.updateOneSauce);
 
-//DELETE ----- DELETE ----- SUPPRIMER
+//DELETE ----- DELETE ----- SUPPRESSION 
 router.delete("/:id", auth, saucesCtrl.deleteOneSauce);
 
 module.exports = router;

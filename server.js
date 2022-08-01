@@ -1,12 +1,7 @@
 const http = require("http");
-
-//importation de l appli express
 const app = require("./app");
-
-//package pour utiliser les variables d environnement
 const dotenv = require("dotenv");
 const result = dotenv.config();
-//console.log(process.env);
 
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
@@ -20,8 +15,8 @@ const normalizePort = (val) => {
   return false;
 };
 
-const port = normalizePort(process.env.PORT || "3000");
-//parametrage du server avec methode set express
+const port = normalizePort(process.env.PORT);
+
 app.set("port", port);
 
 const errorHandler = (error) => {
@@ -45,8 +40,6 @@ const errorHandler = (error) => {
       throw error;
   }
 };
-
-//fonction(app) appeler pour chaque requete recu par le serveur
 const server = http.createServer(app);
 
 server.on("error", errorHandler);

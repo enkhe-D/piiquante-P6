@@ -1,11 +1,10 @@
-##### frontend
-pour lancer le frontend tapper la commend : ng serve
-
-# Créer un compte
-http://localhost:4200/api/auth
-
-email + mdp
+### base de donnée 
+MongoDB atlas
+mettre les information pour les variables d'environnement
 
 ##### backend
-pour lancer le server tapper dans le terminal: nodemon server ou npm run start
+pour lancer le serveur: `$ npm run start`
+
+##### frontend
+pour lancer le frontend: `$ ng serve`
 

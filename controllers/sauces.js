@@ -1,7 +1,7 @@
 const Sauce = require("../models/Sauce");
 const fs = require("fs");
 
-// CONTROLLER CREATE SAUCES
+/////// CONTROLLER CREATE SAUCES
 exports.createSauces = (req, res, next) => {
   const createNewSauce = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
@@ -21,7 +21,7 @@ exports.createSauces = (req, res, next) => {
     });
 };
 
-// //CONTROLLER ALL SAUCES
+/////// CONTROLLER ALL SAUCES
 exports.readAllSauces = (req, res, next) => {
   Sauce.find()
     .then((readAllSauces) => {
@@ -39,11 +39,8 @@ exports.readOneSauce = (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
-// /////// CONTROLLER UPDATE ONE SAUCE
+/////// CONTROLLER UPDATE ONE SAUCE
 exports.updateOneSauce = (req, res, next) => {
-  console.log("------ req.file updateimage ----------");
-  console.log(req.file);
-
   if (req.file) {
     Sauce.findOne({ _id: req.params.id })
       .then((updateImage) => {
@@ -90,47 +87,3 @@ exports.deleteOneSauce = (req, res, next) => {
     })
     .catch((error) => res.status(400).json({ error }));
 };
-
-// exports.updateOneFicheSauce = (req, res, next) => {
-//   const ficheSauce = req.file
-//     ? {
-//         ...JSON.parse(req.body.sauce),
-//         imageUrl: `${req.protocol}://${req.get("host")}/images/${
-//           req.file.filename
-//         }`,
-//       }
-//     : { ...req.body };
-
-//   delete ficheSauce._userId;
-//   Sauce.findOne({ _id: req.params.id })
-//     .then((sauce) => {
-//       if (sauce.userId != req.auth.userId) {
-//         res.status(401).json({ message: "action non autorisée" });
-//       } else {
-//         Sauce.updateOne(
-//           { _id: req.params.id },
-//           { ...ficheSauce, _id: req.params.id }
-//         )
-//           .then(() => res.status(200).json({ message: "Sauce modifié" }))
-//           .catch((error) => res.status(401).json({ error }));
-//       }
-//     })
-//     .catch((error) => res.status(400).json({ error }));
-// };
-
-// exports.deleteOneFicheSauce = (req, res, next) => {
-//   Sauce.findOne({ _id: req.params.id })
-//     .then((sauce) => {
-//       if (sauce.userId != req.auth.userId) {
-//         res.status(401).json({ message: "Action non autorisée" });
-//       } else {
-//         const filename = sauce.imageUrl.split("/images/")[1];
-//         fs.unlink(`images/${filename}`, () => {
-//           Sauce.deleteOne({ _id: req.params.id })
-//             .then(() => res.status(200).json({ message: "Sauce supprimée" }))
-//             .catch((error) => res.status(400).json({ error }));
-//         });
-//       }
-//     })
-//     .catch((error) => res.status(400).json({ error }));
-// };

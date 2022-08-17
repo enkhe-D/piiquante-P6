@@ -22,7 +22,7 @@ router.get("/:id", auth, saucesCtrl.readOneSauce);
 //PUT ----- UPDATE ----- MODIFICATION/MISE A JOUR
 router.put("/:id", auth, multer, saucesCtrl.updateOneSauce);
 
-//DELETE ----- DELETE ----- SUPPRESSION 
+//DELETE ----- DELETE ----- SUPPRESSION
 router.delete("/:id", auth, saucesCtrl.deleteOneSauce);
 
 module.exports = router;

@@ -1,6 +1,10 @@
+//importation package password-validator
 const passwordValidator = require("password-validator");
+
+//création du schema
 const passwordSchema = new passwordValidator();
 
+//le schema que doit respecter le mot de passe
 passwordSchema
   .is()
   .min(5)
@@ -19,7 +23,9 @@ passwordSchema
   .not()
   .oneOf(["Passw0rd", "Password123"]);
 
+//exportation du module
 module.exports = (req, res, next) => {
+  //verification de password par rapport au schema deffinit
   if (passwordSchema.validate(req.body.password)) {
     next();
   } else {

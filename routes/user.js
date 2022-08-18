@@ -1,12 +1,26 @@
+//importation package express
 const express = require("express");
-const password = require("../middleware/password");
-const emailValidator = require("../middleware/email-validator")
 
-const {signup, login} = require("../controllers/user");
+//importation du middleware passwordValidator et emailValidator
+const passwordValidator = require("../middleware/password-validator");
+const emailValidator = require("../middleware/email-validator");
 
+//importation du controller
+const userController = require("../controllers/user");
+
+//fonction Router
 const router = express.Router();
 
- router.post("/signup", emailValidator,password, signup);
- router.post("/login",login);
+//route (endpoint) signup
+router.post(
+  "/signup",
+  emailValidator,
+  passwordValidator,
+  userController.signup
+);
 
+//route (endpoint) login
+router.post("/login", userController.login);
+
+//exportation du module
 module.exports = router;

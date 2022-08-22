@@ -1,25 +1,24 @@
 //importation des packages
 
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const cryptoJs = require("crypto-js");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const result = dotenv.config();
 const User = require("../models/User");
 
 //--------CONTROLER SIGNUP pour enregistrer une nouvel utilisateur
 exports.signup = (req, res, next) => {
-  //chiffrement de l email
-  const emailCryptoJs = cryptoJs
-    .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
-    .toString();
+  // //chiffrement de l email
+  // const emailCryptoJs = cryptoJs
+  //   .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+  //   .toString();
 
   //hashage du mot de passe
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
       const user = new User({
-        email: emailCryptoJs,
+        email: req.body.email /*emailCryptoJs*/,
         password: hash,
       });
 
@@ -38,12 +37,12 @@ exports.signup = (req, res, next) => {
 
 //----------CONTROLER LOGIN
 exports.login = (req, res, next) => {
-  const emailCryptoJs = cryptoJs
-    .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
-    .toString();
+  // const emailCryptoJs = cryptoJs
+  //   .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+  //   .toString();
 
   //chercher dans la bd si le email de l utilisateur est present
-  User.findOne({ email: emailCryptoJs })
+  User.findOne({ email: req.body.email /*emailCryptoJs*/ })
     .then((user) => {
       if (!user) {
         return res.status(401).json({

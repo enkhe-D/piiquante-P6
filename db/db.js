@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const result = dotenv.config();
+
+require("dotenv").config();
 
 mongoose
   .connect(
@@ -8,6 +8,6 @@ mongoose
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion a MongoDB: réussi! ;)"))
-  .catch(() => console.log("Connexion a MongoDB: échoué! tkt tu vas réussir"));
+  .catch(() => console.log("Connexion a MongoDB: échoué!"));
 
 module.exports = mongoose;

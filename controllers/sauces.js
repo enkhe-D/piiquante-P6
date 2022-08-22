@@ -47,8 +47,8 @@ exports.getOneSauce = (req, res, next) => {
 /////// CONTROLLER UPDATE ONE SAUCE
 exports.updateSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
-    .then((updateSaucObejct) => {
-      if (updateSaucObejct.userId !== req.auth.userId) {
+    .then((updateSauceObject) => {
+      if (updateSauceObject.userId !== req.auth.userId) {
         return res.status(400).json({ error: "Modification pas autorisé" });
       } else {
         if (req.file) {

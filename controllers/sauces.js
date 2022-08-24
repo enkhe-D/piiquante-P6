@@ -5,25 +5,25 @@ const fs = require("fs");
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
 
+  delete sauceObject._id;
+  delete sauceObject._userId;
+
   const sauce = new Sauce({
     ...sauceObject,
+    userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
   });
 
-  if (sauce.userId !== req.auth.userId) {
-    return res.status(400).json({ error: "Création pas autorisé" });
-  } else {
-    sauce
-      .save()
-      .then(() => {
-        res.status(201).json({ message: "Sauce créée et enregistrée" });
-      })
-      .catch((error) => {
-        res.status(400).json({ error });
-      });
-  }
+  sauce
+    .save()
+    .then(() => {
+      res.status(201).json({ message: "Sauce créée et enregistrée" });
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
 };
 
 /////// CONTROLLER ALL SAUCES
@@ -46,53 +46,50 @@ exports.getOneSauce = (req, res, next) => {
 
 /////// CONTROLLER UPDATE ONE SAUCE
 exports.updateSauce = (req, res, next) => {
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauce),
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body };
+
+  delete sauceObject._userId;
   Sauce.findOne({ _id: req.params.id })
-    .then((updateSauceObject) => {
-      if (updateSauceObject.userId !== req.auth.userId) {
-        return res.status(400).json({ error: "Modification pas autorisé" });
+    .then((sauce) => {
+      if (sauce.userId !== req.auth.userId) {
+        res.status(401).json({ message: "Modification non autorisé" });
       } else {
-        if (req.file) {
-          Sauce.findOne({ _id: req.params.id })
-            .then((sauceObjectImage) => {
-              const filename = sauceObjectImage.imageUrl.split("/images/")[1];
-              fs.unlink(`images/${filename}`, (error) => {
-                if (error) throw error;
-                console.log("IMAGE MODIFIÉE");
-              });
-            })
-            .catch((error) => res.status(400).json({ error }));
-        } else {
-          console.log("erreur");
-        }
-
-        const sauceObject = req.file
-          ? {
-              ...JSON.parse(req.body.sauce),
-              imageUrl: `${req.protocol}://${req.get("host")}/images/${
-                req.file.filename
-              }`,
-            }
-          : { ...req.body };
-
-        Sauce.updateOne(
-          { _id: req.params.id },
-          { ...sauceObject, _id: req.params.id }
-        )
-          .then(() => res.status(200).json({ message: "Sauce modifiée" }))
+        Sauce.findOne({ _id: req.params.id })
+          .then((sauce) => {
+            const filename = sauce.imageUrl.split("/images/")[1];
+            fs.unlink(`images/${filename}`, () => {
+              Sauce.updateOne(
+                { _id: req.params.id },
+                { ...sauceObject, _id: req.params.id }
+              )
+                .then(() =>
+                  res.status(200).json({ message: "Sauce mise a jour" })
+                )
+                .catch((error) => res.status(400).json({ error }));
+            });
+          })
           .catch((error) => res.status(401).json({ error }));
       }
     })
-    .catch((error) => res.status(401).json({ error }));
+    .catch((error) => res.status(500).json({ error }));
 };
 
 /////// CONTROLLER DELETE ONE SAUCE
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
-    .then((deleteSauce) => {
-      if (deleteSauce.userId !== req.auth.userId) {
+    .then((sauce) => {
+      if (sauce.userId !== req.auth.userId) {
         return res.status(401).json({ error: "Suppression non autorisée !" });
       } else {
-        const filename = deleteSauce.imageUrl.split("/images/")[1];
+        const filename = sauce.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => res.status(200).json({ message: "Sauce supprimée" }))

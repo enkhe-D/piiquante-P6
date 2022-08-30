@@ -1,4 +1,4 @@
-//importation package express
+//importation des packages
 const express = require("express");
 
 //importation du middleware passwordValidator et emailValidator
@@ -22,5 +22,5 @@ router.post(
 //route (endpoint) login
 router.post("/login", userController.login);
 
-//exportation du module
+// exportation du module pour que les autres fichiers puissent y acceder
 module.exports = router;

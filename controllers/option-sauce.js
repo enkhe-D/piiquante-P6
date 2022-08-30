@@ -1,5 +1,6 @@
 const Sauce = require("../models/Sauce");
 
+// controller pour le like d une sauce + ajout de l userId dans le tableau usersLiked
 exports.userLike = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauceObjet) => {
@@ -14,10 +15,11 @@ exports.userLike = (req, res, next) => {
             $push: { usersLiked: req.body.userId },
           }
         )
-          .then(() => res.status(200).json({ message: "liked" }))
+          .then(() => res.status(201).json({ message: "liked" }))
           .catch((error) => res.status(400).json({ error }));
       }
 
+      // enlever le like et retire le userId du tableau usersLiked
       if (
         sauceObjet.usersLiked.includes(req.body.userId) &&
         req.body.like === 0
@@ -30,13 +32,12 @@ exports.userLike = (req, res, next) => {
           }
         )
           .then(() =>
-            res
-              .status(200)
-              .json({ message: "Vous ne savez pas si vous aimez ou pas" })
+            res.status(200).json({ message: "Option désélectionnée" })
           )
           .catch((error) => res.status(400).json({ error }));
       }
 
+      // controller pour le dislike d une sauce + ajout de le userId du tableau usersDisliked
       if (
         !sauceObjet.usersDisliked.includes(req.body.userId) &&
         req.body.like === -1
@@ -52,6 +53,7 @@ exports.userLike = (req, res, next) => {
           .catch((error) => res.status(400).json({ error }));
       }
 
+      // enlever le dislikes et retire le userId du tableau usersDisliked
       if (
         sauceObjet.usersDisliked.includes(req.body.userId) &&
         req.body.like === 0
@@ -63,7 +65,9 @@ exports.userLike = (req, res, next) => {
             $pull: { usersDisliked: req.body.userId },
           }
         )
-          .then(() => res.status(200).json({ message: "bha compteur a 0" }))
+          .then(() =>
+            res.status(200).json({ message: "Option désélectionnée" })
+          )
           .catch((error) => res.status(400).json({ error }));
       }
     })

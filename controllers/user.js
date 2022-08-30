@@ -1,12 +1,13 @@
 //importation des packages
-
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const cryptoJs = require("crypto-js");
 const jwt = require("jsonwebtoken");
+
+//importation du model User.js
 const User = require("../models/User");
 
-//--------CONTROLER SIGNUP pour enregistrer une nouvel utilisateur
+//--------Implémentation de la fonction signup pour s'incrire
 exports.signup = (req, res, next) => {
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
@@ -19,8 +20,6 @@ exports.signup = (req, res, next) => {
         email: emailCryptoJs,
         password: hash,
       });
-
-      //envoie a la base de donnée
       user
         .save()
         .then(() =>
@@ -33,18 +32,17 @@ exports.signup = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-//----------CONTROLER LOGIN
+//----------Implémentation de la fonction login pour se connecter
 exports.login = (req, res, next) => {
   const emailCryptoJs = cryptoJs
     .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
     .toString();
 
-  //chercher dans la bd si le email de l utilisateur est present
-  User.findOne({ emailCryptoJs })
+  User.findOne({ email: emailCryptoJs })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({
-          error: "utilisateur introuvable",
+        return res.status(400).json({
+          error: "utilisateur inexistant",
         });
       }
 

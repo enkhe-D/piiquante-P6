@@ -1,27 +1,21 @@
-//importation package
+//importation des packages
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const path = require("path");
-
-//importation connexion bd
 const mongoose = require("./db/db");
 
-//importation routes
+//importation des routes
 const userRoutes = require("./routes/user");
 const saucesRoutes = require("./routes/sauces");
 
-//pour créer une application express
+//creation de l application
 const app = express();
 
-//journal des requests et de responses
+//debug
 app.use(morgan("dev"));
 
-//debug mongoose
-console.log("------debug logger mongoose------------");
-mongoose.set("debug", true);
-
-//gestion des problèmes de CORS (Cross-Origin Request Sharing)
+//gestion des CORS:Cross Origin Resource Sharing
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -35,19 +29,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-
-//transform le coprs (body) en objet json exploitable
+//pars
 app.use(bodyParser.json());
 
-//route d authentification
+//creation du middleware + uri
 app.use("/api/auth", userRoutes);
-
-//route général
 app.use("/api/sauces", saucesRoutes);
-
-//chemain pour les fichiers images
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-//exportation de app.js
+// exportation du module pour que les autres fichiers puissent y acceder
 module.exports = app;

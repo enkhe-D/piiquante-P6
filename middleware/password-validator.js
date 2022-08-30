@@ -1,4 +1,4 @@
-//importation package password-validator
+//importation des packages
 const passwordValidator = require("password-validator");
 
 //création du schema
@@ -25,7 +25,7 @@ passwordSchema
 
 //exportation du module
 module.exports = (req, res, next) => {
-  //verification de password par rapport au schema deffinit
+  //verification de password par rapport au schema defini
   if (passwordSchema.validate(req.body.password)) {
     next();
   } else {

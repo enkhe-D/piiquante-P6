@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//pars
+//analyse le corp de la requere http
 app.use(bodyParser.json());
 
 //creation du middleware + uri

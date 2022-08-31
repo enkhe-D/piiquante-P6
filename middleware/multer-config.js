@@ -1,6 +1,7 @@
 //importation des packages
 const multer = require("multer");
 
+//dictionnaire de MIME TYPES
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
@@ -8,6 +9,7 @@ const MIME_TYPES = {
   "image/gif": "gif",
 };
 
+//destination pour le stokage de fichier et génération d'un nom de fichier unique
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, "images");
@@ -20,4 +22,5 @@ const storage = multer.diskStorage({
   },
 });
 
+// exportation du module pour que les autres fichiers puissent y acceder
 module.exports = multer({ storage }).single("image");
